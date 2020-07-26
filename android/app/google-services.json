@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "372214286417",
+    "firebase_url": "https://arriv-server.firebaseio.com",
+    "project_id": "arriv-server",
+    "storage_bucket": "arriv-server.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372214286417:android:6a125ffe01c24e8754d070",
+        "android_client_info": {
+          "package_name": "com.example.Arriv"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372214286417-5nd4sabjcsekld84sri8q4ftppo12oi1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.Arriv",
+            "certificate_hash": "25443a52cd8839f069b57a85c1f989fd2615230e"
+          }
+        },
+        {
+          "client_id": "372214286417-vf8v41d6hsk0ba01t9v0gv77hqjout9g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUkvFslLxRxmtHso9pxFoFU0AiNKlOl44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372214286417-vf8v41d6hsk0ba01t9v0gv77hqjout9g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

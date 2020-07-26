@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>372214286417-87ki4a4vo486prf0hqvkklrhs1mme1n0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.372214286417-87ki4a4vo486prf0hqvkklrhs1mme1n0</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>372214286417-5nd4sabjcsekld84sri8q4ftppo12oi1.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDjY4SiAj0BAlmfOZrNxO5_gpqdMTOVH6I</string>
+	<key>GCM_SENDER_ID</key>
+	<string>372214286417</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.Arriv</string>
+	<key>PROJECT_ID</key>
+	<string>arriv-server</string>
+	<key>STORAGE_BUCKET</key>
+	<string>arriv-server.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:372214286417:ios:0418e4327c0dc8ec54d070</string>
+	<key>DATABASE_URL</key>
+	<string>https://arriv-server.firebaseio.com</string>
+</dict>
+</plist>
