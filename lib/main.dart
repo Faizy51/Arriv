@@ -1,4 +1,4 @@
-import 'package:Arriv/home_screen.dart';
+import 'package:Arriv/login_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
