@@ -26,11 +26,9 @@ class AuthScreen extends StatelessWidget {
             print(e);
           });
         },
-
         verificationFailed: (AuthException authException) {
           print(authException.message);
         },
-
         codeSent: (String verificationId, [int forceResendingToken]) {
           //show dialog to take input from the user
           _showOTPDialog(context, () {
@@ -48,8 +46,11 @@ class AuthScreen extends StatelessWidget {
             });
           });
         },
-
-        codeAutoRetrievalTimeout: null);
+        codeAutoRetrievalTimeout: (String verificationId) {
+          verificationId = verificationId;
+          print(verificationId);
+          print("Timout");
+        });
   }
 
   @override
@@ -88,13 +89,12 @@ class AuthScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(40),
                 child: FlatButton(
                   onPressed: () {
-                    // todo: Make firebase request and show alert.
                     FocusScope.of(context).unfocus();
                     String phoneNumber = phoneNumberController.text;
                     if (phoneNumber.isEmpty || phoneNumber.length < 10) {
                       _showAlertDialog(context);
                     } else {
-                      registerUser("+91"+phoneNumber, context);
+                      registerUser("+91" + phoneNumber, context);
                     }
                   },
                   padding: EdgeInsets.symmetric(horizontal: 100),
@@ -187,10 +187,9 @@ class AuthScreen extends StatelessWidget {
               },
             ),
             FlatButton(
-              color: Colors.blue,
-              child: Text('Done'),
-              onPressed: onPressedClosure
-            ),
+                color: Colors.blue,
+                child: Text('Done'),
+                onPressed: onPressedClosure),
           ],
         );
       },
