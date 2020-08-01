@@ -1,12 +1,15 @@
 import 'dart:ui';
+import 'package:Arriv/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'home_screen.dart';
 
 class AuthScreen extends StatelessWidget {
   final phoneNumberController = TextEditingController();
   final otpController = TextEditingController();
+  final firestoreInstance = Firestore.instance;
 
   Future registerUser(String mobile, BuildContext context) async {
     FirebaseAuth _auth = FirebaseAuth.instance;
@@ -15,7 +18,7 @@ class AuthScreen extends StatelessWidget {
         phoneNumber: mobile,
         timeout: Duration(seconds: 60),
         verificationCompleted: (AuthCredential credential) {
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(); // Do we need this?
 
           _auth.signInWithCredential(credential).then((AuthResult result) {
             Navigator.pushReplacement(
@@ -34,16 +37,20 @@ class AuthScreen extends StatelessWidget {
           _showOTPDialog(context, () {
             FirebaseAuth auth = FirebaseAuth.instance;
             final smsCode = otpController.text.trim();
-            AuthCredential credential = PhoneAuthProvider.getCredential(
-                verificationId: verificationId, smsCode: smsCode);
-            auth.signInWithCredential(credential).then((AuthResult result) {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomeScreen(result.user)));
-            }).catchError((e) {
-              print(e);
-            });
+            if (smsCode.isEmpty || smsCode.length != 6) {
+              _showAlertDialog(context, "Invalid code entered!",
+                  "Please enter correct code again.");
+            } else {
+              AuthCredential credential = PhoneAuthProvider.getCredential(
+                  verificationId: verificationId, smsCode: smsCode);
+              auth
+                  .signInWithCredential(credential)
+                  .then((AuthResult result) async {
+                navigateToAppropriateScreen(context);
+              }).catchError((e) {
+                print(e);
+              });
+            }
           });
         },
         codeAutoRetrievalTimeout: (String verificationId) {
@@ -51,6 +58,25 @@ class AuthScreen extends StatelessWidget {
           print(verificationId);
           print("Timout");
         });
+  }
+
+  void navigateToAppropriateScreen(BuildContext context) async {
+    var firebaseUser = await FirebaseAuth.instance.currentUser();
+    var value = await firestoreInstance
+        .collection("users")
+        .document(firebaseUser.uid)
+        .get();
+
+    // Check if user is already registered
+    if (value.data == null) {
+      // Navigate to Sign Up page
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => SignUpScreen()));
+    } else {
+      // User is registered, Show home screen.
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => HomeScreen(firebaseUser)));
+    }
   }
 
   @override
@@ -80,6 +106,7 @@ class AuthScreen extends StatelessWidget {
                         Icons.phone_android,
                       ),
                       hintText: "Enter your Phone number"),
+                  maxLength: 10,
                 ),
               ),
               SizedBox(
@@ -92,7 +119,8 @@ class AuthScreen extends StatelessWidget {
                     FocusScope.of(context).unfocus();
                     String phoneNumber = phoneNumberController.text;
                     if (phoneNumber.isEmpty || phoneNumber.length < 10) {
-                      _showAlertDialog(context);
+                      _showAlertDialog(context, 'Invalid Phone number!',
+                          'The phone number you entered is empty, or not valid. Please enter it again.');
                     } else {
                       registerUser("+91" + phoneNumber, context);
                     }
@@ -116,7 +144,8 @@ class AuthScreen extends StatelessWidget {
   }
 
   // Alerts
-  Future<void> _showAlertDialog(BuildContext context) async {
+  Future<void> _showAlertDialog(
+      BuildContext context, String title, String message) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
@@ -124,12 +153,11 @@ class AuthScreen extends StatelessWidget {
         return AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          title: Text('Invalid Phone number!'),
+          title: Text(title),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(
-                    'The phone number you entered is empty, or not valid. Please enter it again.'),
+                Text(message),
               ],
             ),
           ),
