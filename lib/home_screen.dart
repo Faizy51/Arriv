@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            FlatButton(
+            RaisedButton(
               onPressed: () {
                 FirebaseAuth.instance.signOut();
                 Navigator.of(context).push(

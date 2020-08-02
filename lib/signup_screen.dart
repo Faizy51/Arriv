@@ -19,14 +19,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  //TODO: Create a wallet for the user.
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("New User"),
-        backgroundColor: Colors.cyan,
+        backgroundColor: Colors.lightBlue[100],
       ),
       body: Container(
         margin: EdgeInsets.all(24),
@@ -74,8 +72,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
       "email": _email,
       "empId": _empId,
       "type": _type,
-    }).then((_) {
-      print("success!");
+    }).then((value) {
+      print("successfully created user.");
+
+      firestoreInstance
+          .collection("users")
+          .document(firebaseUser.uid)
+          .collection("wallets")
+          .add({
+        "balance": 0,
+      }).then((value) {
+        print("wallet successfully created for user: ${firebaseUser.uid}");
+      });
+
       // Navigate to homescreen
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => HomeScreen(firebaseUser)));

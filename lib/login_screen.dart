@@ -114,7 +114,7 @@ class AuthScreen extends StatelessWidget {
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(40),
-                child: FlatButton(
+                child: RaisedButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
                     String phoneNumber = phoneNumberController.text;
