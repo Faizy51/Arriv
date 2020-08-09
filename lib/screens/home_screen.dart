@@ -204,13 +204,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   FloatingActionButton buildFAB() {
     return FloatingActionButton(
-      child: new Icon(Icons.keyboard_arrow_up),
+      child: ImageIcon(AssetImage('assets/images/qr.png'), color: Colors.white,),
       onPressed: () {
         showModalBottomSheet(
+          barrierColor: Colors.black.withOpacity(0.8),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(20.0),
-                topRight: const Radius.circular(20.0)
+                topLeft: const Radius.circular(25.0),
+                topRight: const Radius.circular(25.0)
                 )
             ),
             isScrollControlled: true,
@@ -240,8 +241,6 @@ class _HomeScreenState extends State<HomeScreen> {
             });
       },
       backgroundColor: darkBlue,
-      // shape: new BeveledRectangleBorder(
-      //     borderRadius: new BorderRadius.circular(30.0)),
     );
   }
 
