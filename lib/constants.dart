@@ -7,3 +7,7 @@ const Color purple = Color(0xFF63609a);
 
 // Strings
 const String BOTTOM_BAR_TICKETS = "Tickets";
+
+// Integers
+const double QRCODE_DIMENSION = 300;
+const double QR_MODAL_HEIGHT = 450;

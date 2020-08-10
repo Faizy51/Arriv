@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Arriv/constants.dart';
 import 'package:Arriv/models/userDetails.dart';
 import 'package:Arriv/models/wallet.dart';
@@ -77,38 +79,42 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCard() => new Container(
-        child: Positioned(
-          top: 80,
-          left: 60,
-          right: 60,
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-                color: lightBlue,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(1),
-                    spreadRadius: 0,
-                    blurRadius: 5,
-                    offset: Offset(0, 3), // changes position of shadow
+        child: Builder(
+          builder: (BuildContext context) {
+            return Positioned(
+              top: MediaQuery.of(context).padding.top + kToolbarHeight,
+              left: 60,
+              right: 60,
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                    color: lightBlue,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(1),
+                        spreadRadius: 0,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ]),
+                child: new Center(
+                  child: new Text(
+                    // TODO : wallet balance
+                    "Your Wallet Balance: \u{20B9}${userWallet != null ? userWallet.balance : ""}",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Roboto',
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white,
+                        decoration: TextDecoration.none),
                   ),
-                ]),
-            child: new Center(
-              child: new Text(
-                // TODO : wallet balance
-                "Your Wallet Balance: \u{20B9}${userWallet != null ? userWallet.balance : ""}",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Roboto',
-                    fontStyle: FontStyle.italic,
-                    color: Colors.white,
-                    decoration: TextDecoration.none),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       );
 
@@ -117,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
           preferredSize: Size.fromHeight(80.0), // here the desired height
           child: AppBar(
             //TODO: Display name doesn't work.
+            centerTitle: false,
             title: Text(
               "Hi ${regUser != null ? regUser.name : "Jason"} 👋🏼",
               style: TextStyle(color: Colors.white),
@@ -146,28 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        body: PageStorage(
-            bucket: bucket,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 50),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "Show QR to Conductor👮🏽‍♂️",
-                    style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  Dashes(),
-                  buildQRImage(),
-                  Dashes(),
-                ],
-              ),
-            )),
+        body: PageStorage(bucket: bucket, child: Container()),
         bottomNavigationBar: buildBottomAppBar(),
         floatingActionButton: buildFAB(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -175,8 +161,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Container buildQRImage() {
     return Container(
-      margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
-      padding: EdgeInsets.symmetric(vertical: 10),
+      height: QRCODE_DIMENSION,
+      width: QRCODE_DIMENSION,
+      // margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
+      padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
           border: Border.all(
             width: 6,
@@ -184,17 +172,22 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           borderRadius: BorderRadius.circular(20.0),
           boxShadow: [
-            CustomBoxShadow(
-                color: Colors.black.withOpacity(1),
-                blurRadius: 5.0,
-                blurStyle: BlurStyle.outer)
+            // HACK: solve ios black patch issue
+            Platform.isAndroid
+                ? CustomBoxShadow(
+                    color: Colors.black.withOpacity(1),
+                    blurRadius: 5.0,
+                    blurStyle: BlurStyle.outer)
+                : BoxShadow(
+                    color: Colors.white,
+                  ),
           ]),
       child: Center(
         child: RepaintBoundary(
           // key: globalKey,
           child: QrImage(
             data: "${userWallet.walletId}",
-            size: 300,
+            size: QRCODE_DIMENSION,
             version: QrVersions.auto,
           ),
         ),
@@ -204,36 +197,62 @@ class _HomeScreenState extends State<HomeScreen> {
 
   FloatingActionButton buildFAB() {
     return FloatingActionButton(
-      child: ImageIcon(AssetImage('assets/images/qr.png'), color: Colors.white,),
+      child: ImageIcon(
+        AssetImage('assets/images/qr.png'),
+        color: Colors.white,
+      ),
       onPressed: () {
         showModalBottomSheet(
-          barrierColor: Colors.black.withOpacity(0.8),
+            barrierColor: Colors.black.withOpacity(0.8),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(25.0),
-                topRight: const Radius.circular(25.0)
-                )
-            ),
+                borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(25.0),
+                    topRight: const Radius.circular(25.0))),
             isScrollControlled: true,
             context: context,
             builder: (builder) {
               return Container(
-                height: 450,
+                height: QR_MODAL_HEIGHT,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 20),
-                    Text(
-                      "Show QR to Conductor👮🏽‍♂️",
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                        margin: EdgeInsets.only(top: 10),
+                        width: 150,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text("")),
+                    SizedBox(height: 15),
+                    RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                        children: [
+                          TextSpan(
+                            text: "Show QR to Conductor ",
+                          ),
+                          WidgetSpan(
+                            child: Image(
+                              height: 30,
+                              width: 30,
+                              image: AssetImage('assets/images/bus-driver.png'),
+                              color: null,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     SizedBox(height: 15),
                     Dashes(),
+                    SizedBox(height: 15),
                     buildQRImage(),
+                    SizedBox(height: 15),
                     Dashes(),
                   ],
                 ),
