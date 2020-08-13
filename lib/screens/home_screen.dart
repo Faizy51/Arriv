@@ -218,10 +218,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: <Widget>[
                     Container(
                         margin: EdgeInsets.only(top: 10),
-                        width: 150,
-                        height: 7,
+                        width: 70,
+                        height: 5,
                         decoration: BoxDecoration(
-                          color: Colors.grey,
+                          color: Colors.grey[400],
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text("")),
