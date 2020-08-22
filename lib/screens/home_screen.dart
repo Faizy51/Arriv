@@ -4,6 +4,7 @@ import 'package:Arriv/models/userDetails.dart';
 import 'package:Arriv/models/wallet.dart';
 import 'package:Arriv/screens/login_screen.dart';
 import 'package:Arriv/screens/qr_code_popup.dart';
+import 'package:Arriv/views/busList.dart';
 import 'package:Arriv/views/dashes.dart';
 import 'package:Arriv/views/dropDown_textField.dart';
 import 'package:Arriv/views/stepper_button.dart';
@@ -248,108 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Expanded(
-                  child: ListView.builder(
-                      physics: BouncingScrollPhysics(
-                          parent: AlwaysScrollableScrollPhysics()),
-                      scrollDirection: Axis.vertical,
-                      itemCount: Trip.fetchTrips().length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                              left: 20, right: 20, top: 10, bottom: 10),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                      BUSCELL_BORDER_RADIUS),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  )),
-                              height: BUSCELL_HEIGHT,
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            BUSCELL_BORDER_RADIUS),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: <Widget>[
-                                          Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10),
-                                              child: Text(
-                                                Trip.fetchTrips()[index]
-                                                    .busName,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              SizedBox(
-                                                width: 30,
-                                              ),
-                                              Text(
-                                                DateFormat.jm().format(
-                                                    Trip.fetchTrips()[index]
-                                                        .start),
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text('   -----------------   '),
-                                              Text(
-                                                DateFormat.jm().format(
-                                                    Trip.fetchTrips()[index]
-                                                        .end),
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  VerticalDivider(
-                                    width: 10,
-                                    thickness: 1,
-                                    indent: 5,
-                                    endIndent: 5,
-                                    color: Colors.grey,
-                                  ),
-                                  Container(
-                                    width: BUSCELL_HEIGHT,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            BUSCELL_BORDER_RADIUS)),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        ImageIcon(
-                                          AssetImage('assets/images/tracking.png'),
-                                          size: 40,
-                                        ),
-                                        Text("Track")
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              )),
-                        );
-                      }),
+                  child: BusList(),
                 ),
               ],
             ),
