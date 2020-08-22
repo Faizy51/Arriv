@@ -340,13 +340,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       children: <Widget>[
                                         ImageIcon(
                                           AssetImage('assets/images/tracking.png'),
-                                          // color: Colors.white,
                                           size: 40,
                                         ),
-                                        // Icon(
-                                        //   Icons.directions_bike,
-                                        //   size: 40,
-                                        // ),
                                         Text("Track")
                                       ],
                                     ),
