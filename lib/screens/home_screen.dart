@@ -1,15 +1,16 @@
-import 'dart:io';
-
 import 'package:Arriv/constants.dart';
+import 'package:Arriv/models/trips.dart';
 import 'package:Arriv/models/userDetails.dart';
 import 'package:Arriv/models/wallet.dart';
 import 'package:Arriv/screens/login_screen.dart';
-import 'package:Arriv/views/CustomBoxShadow.dart';
+import 'package:Arriv/screens/qr_code_popup.dart';
 import 'package:Arriv/views/dashes.dart';
+import 'package:Arriv/views/dropDown_textField.dart';
+import 'package:Arriv/views/stepper_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   final FirebaseUser user;
@@ -25,9 +26,14 @@ class _HomeScreenState extends State<HomeScreen> {
   _HomeScreenState(this.user);
   UserDetails regUser;
   Future userFuture;
-
   Wallet userWallet;
-  double walletBalance = 540;
+
+  var _currentSelectedValue = '';
+
+  TextEditingController _fromController = TextEditingController();
+  TextEditingController _toController = TextEditingController();
+  var _numberOfTickets = 01;
+
   int _currentTab = 0;
   final List<Widget> _children = [
     Text("Ongoing Trips"),
@@ -118,84 +124,249 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
 
-  Widget _buildBackground(BuildContext context) => new Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(80.0), // here the desired height
-          child: AppBar(
-            //TODO: Display name doesn't work.
-            centerTitle: false,
-            title: Text(
-              "Hi ${regUser != null ? regUser.name : "Jason"} 👋🏼",
-              style: TextStyle(color: Colors.white),
+  Widget _buildBackground(BuildContext context) => WillPopScope(
+        onWillPop: () async => false,
+        child: new Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(80.0), // here the desired height
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              centerTitle: false,
+              //TODO: Display name doesn't work.
+              title: Text(
+                "Hi ${regUser != null ? regUser.name : "Jason"} 👋🏼",
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: darkBlue,
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      //Navigate to auth
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AuthScreen()));
+                    },
+                    highlightColor: Colors.grey,
+                    child: Container(
+                      margin: EdgeInsets.all(0.0),
+                      padding: const EdgeInsets.all(5.0),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                      child: Text(
+                        "Log Out",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ))
+              ],
             ),
-            backgroundColor: darkBlue,
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
-                    //Navigate to auth
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => AuthScreen()));
-                  },
-                  highlightColor: Colors.grey,
-                  child: Container(
-                    margin: EdgeInsets.all(0.0),
-                    padding: const EdgeInsets.all(5.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: Text(
-                      "Log Out",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ))
-            ],
           ),
+          body: PageStorage(
+            bucket: bucket,
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 50),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      DropDownTextField(
+                        textInputController: _fromController,
+                        labelText: FROM,
+                      ),
+                      DropDownTextField(
+                        textInputController: _toController,
+                        labelText: TO,
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      SizedBox(width: 30),
+                      Expanded(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Icon(Icons.directions_walk, size: 30),
+                            Text('X'),
+                            StepperButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _numberOfTickets > 0
+                                        ? _numberOfTickets--
+                                        : _numberOfTickets;
+                                  });
+                                },
+                                icon: Icons.remove),
+                            Text(_numberOfTickets < 10
+                                ? ('0' + _numberOfTickets.toString())
+                                : _numberOfTickets.toString()),
+                            StepperButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _numberOfTickets++;
+                                  });
+                                },
+                                icon: Icons.add)
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 30),
+                      Expanded(
+                        child: FlatButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              side: BorderSide(
+                                color: Colors.black,
+                              )),
+                          color: darkBlue,
+                          textColor: Colors.white,
+                          child: Text('Search Busses'),
+                          onPressed: () {},
+                        ),
+                      ),
+                      SizedBox(width: 30)
+                    ]),
+                Padding(
+                  padding: EdgeInsets.only(left: 20, top: 20, bottom: 10),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text('Available Busses running as per schedule.',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        )),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                      physics: BouncingScrollPhysics(
+                          parent: AlwaysScrollableScrollPhysics()),
+                      scrollDirection: Axis.vertical,
+                      itemCount: Trip.fetchTrips().length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                              left: 20, right: 20, top: 10, bottom: 10),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                      BUSCELL_BORDER_RADIUS),
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1,
+                                  )),
+                              height: BUSCELL_HEIGHT,
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                            BUSCELL_BORDER_RADIUS),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: <Widget>[
+                                          Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                              child: Text(
+                                                Trip.fetchTrips()[index]
+                                                    .busName,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: <Widget>[
+                                              SizedBox(
+                                                width: 30,
+                                              ),
+                                              Text(
+                                                DateFormat.jm().format(
+                                                    Trip.fetchTrips()[index]
+                                                        .start),
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text('   -----------------   '),
+                                              Text(
+                                                DateFormat.jm().format(
+                                                    Trip.fetchTrips()[index]
+                                                        .end),
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  VerticalDivider(
+                                    width: 10,
+                                    thickness: 1,
+                                    indent: 5,
+                                    endIndent: 5,
+                                    color: Colors.grey,
+                                  ),
+                                  Container(
+                                    width: BUSCELL_HEIGHT,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                            BUSCELL_BORDER_RADIUS)),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        ImageIcon(
+                                          AssetImage('assets/images/tracking.png'),
+                                          // color: Colors.white,
+                                          size: 40,
+                                        ),
+                                        // Icon(
+                                        //   Icons.directions_bike,
+                                        //   size: 40,
+                                        // ),
+                                        Text("Track")
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              )),
+                        );
+                      }),
+                ),
+              ],
+            ),
+          ),
+          bottomNavigationBar: buildBottomAppBar(),
+          floatingActionButton: buildFAB(context),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
         ),
-        body: PageStorage(bucket: bucket, child: Container()),
-        bottomNavigationBar: buildBottomAppBar(),
-        floatingActionButton: buildFAB(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       );
 
-  Container buildQRImage() {
-    return Container(
-      height: QRCODE_DIMENSION,
-      width: QRCODE_DIMENSION,
-      // margin: EdgeInsets.fromLTRB(40, 10, 40, 10),
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          border: Border.all(
-            width: 6,
-            color: purple,
-          ),
-          borderRadius: BorderRadius.circular(20.0),
-          boxShadow: [
-            // HACK: solve ios black patch issue
-            Platform.isAndroid
-                ? CustomBoxShadow(
-                    color: Colors.black.withOpacity(1),
-                    blurRadius: 5.0,
-                    blurStyle: BlurStyle.outer)
-                : BoxShadow(
-                    color: Colors.white,
-                  ),
-          ]),
-      child: Center(
-        child: RepaintBoundary(
-          // key: globalKey,
-          child: QrImage(
-            data: "${userWallet.walletId}",
-            size: QRCODE_DIMENSION,
-            version: QrVersions.auto,
-          ),
-        ),
-      ),
-    );
-  }
-
-  FloatingActionButton buildFAB() {
+  FloatingActionButton buildFAB(BuildContext context) {
     return FloatingActionButton(
       child: ImageIcon(
         AssetImage('assets/images/qr.png'),
@@ -251,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 15),
                     Dashes(),
                     SizedBox(height: 15),
-                    buildQRImage(),
+                    QRCodeScreen(userWallet: userWallet),
                     SizedBox(height: 15),
                     Dashes(),
                   ],
@@ -318,11 +489,11 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return MaterialApp(
-              home: Scaffold(
-                body: Stack(
+              builder: (context, widget) {
+                return Stack(
                   children: <Widget>[_buildBackground(context), _buildCard()],
-                ),
-              ),
+                );
+              },
             );
           } else {
             print("Awaiting connection-${snapshot.connectionState}");
