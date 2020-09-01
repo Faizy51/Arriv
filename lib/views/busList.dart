@@ -1,4 +1,5 @@
 import 'package:Arriv/models/trips.dart';
+import 'package:Arriv/screens/booking_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -30,41 +31,59 @@ class BusList extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(BUSCELL_BORDER_RADIUS),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Padding(
-                                padding: EdgeInsets.only(left: 10),
-                                child: Text(
-                                  Trip.fetchTrips()[index].busName,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                SizedBox(
-                                  width: 30,
-                                ),
-                                Text(
-                                  DateFormat.jm()
-                                      .format(Trip.fetchTrips()[index].start),
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Text('   -----------------   '),
-                                Text(
-                                  DateFormat.jm()
-                                      .format(Trip.fetchTrips()[index].end),
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            )
-                          ],
+                      child: InkWell(
+                        onTap: () {
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => BookingScreen(user)));
+                        },
+                        splashColor: lightBlue,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(BUSCELL_BORDER_RADIUS),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    Trip.fetchTrips()[index].busName,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  )),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  SizedBox(
+                                    width: 30,
+                                  ),
+                                  Text(
+                                    DateFormat.jm()
+                                        .format(Trip.fetchTrips()[index].start),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Expanded(
+                                      child: Divider(
+                                      height: 10,
+                                      thickness: 1,
+                                      indent: 10,
+                                      endIndent: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    DateFormat.jm()
+                                        .format(Trip.fetchTrips()[index].end),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(width:20)
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),

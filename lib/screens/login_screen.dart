@@ -3,7 +3,6 @@ import 'package:Arriv/screens/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'home_screen.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -19,12 +18,10 @@ class AuthScreen extends StatelessWidget {
         timeout: Duration(seconds: 60),
         verificationCompleted: (AuthCredential credential) {
           Navigator.of(context).pop(); // Do we need this?
-
-          _auth.signInWithCredential(credential).then((AuthResult result) {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => HomeScreen(result.user)));
+          _auth
+              .signInWithCredential(credential)
+              .then((AuthResult result) async {
+            navigateToAppropriateScreen(context);
           }).catchError((e) {
             print(e);
           });

@@ -1,17 +1,16 @@
 import 'package:Arriv/constants.dart';
-import 'package:Arriv/models/trips.dart';
 import 'package:Arriv/models/userDetails.dart';
 import 'package:Arriv/models/wallet.dart';
 import 'package:Arriv/screens/login_screen.dart';
 import 'package:Arriv/screens/qr_code_popup.dart';
 import 'package:Arriv/views/busList.dart';
+import 'package:Arriv/views/custom_appBar.dart';
 import 'package:Arriv/views/dashes.dart';
 import 'package:Arriv/views/dropDown_textField.dart';
 import 'package:Arriv/views/stepper_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   final FirebaseUser user;
@@ -19,12 +18,10 @@ class HomeScreen extends StatefulWidget {
   HomeScreen(this.user);
 
   @override
-  _HomeScreenState createState() => _HomeScreenState(user);
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final FirebaseUser user;
-  _HomeScreenState(this.user);
   UserDetails regUser;
   Future userFuture;
   Wallet userWallet;
@@ -44,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // _getWalletDetails();
     userFuture = _getRegisteredUser();
     super.initState();
   }
@@ -52,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _getRegisteredUser() async {
     await Firestore.instance
         .collection("users")
-        .document(user.uid)
+        .document(widget.user.uid)
         .get()
         .then((value) async {
       _parseUser(value);
@@ -70,13 +66,13 @@ class _HomeScreenState extends State<HomeScreen> {
     print("Inside");
     await Firestore.instance
         .collection("users")
-        .document(user.uid)
+        .document(widget.user.uid)
         .collection("wallets")
         .getDocuments()
         .then((querySnapshot) {
       if (querySnapshot.documents.length > 1) {
         AssertionError(
-            "User cannot have multiple wallets, but it seems so ${user.uid}");
+            "User cannot have multiple wallets, but it seems so ${widget.user.uid}");
       } else {
         var wallet = querySnapshot.documents.first;
         userWallet = Wallet(wallet.documentID, wallet.data["balance"]);
@@ -131,40 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
           resizeToAvoidBottomInset: false,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(80.0), // here the desired height
-            child: AppBar(
-              automaticallyImplyLeading: false,
-              centerTitle: false,
-              //TODO: Display name doesn't work.
-              title: Text(
-                "Hi ${regUser != null ? regUser.name : "Jason"} 👋🏼",
-                style: TextStyle(color: Colors.white),
-              ),
-              backgroundColor: darkBlue,
-              actions: <Widget>[
-                FlatButton(
-                    onPressed: () {
-                      FirebaseAuth.instance.signOut();
-                      //Navigate to auth
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => AuthScreen()));
-                    },
-                    highlightColor: Colors.grey,
-                    child: Container(
-                      margin: EdgeInsets.all(0.0),
-                      padding: const EdgeInsets.all(5.0),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: Text(
-                        "Log Out",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ))
-              ],
-            ),
+            child: CustomAppBar(userName: regUser.name,),
           ),
           body: PageStorage(
             bucket: bucket,
@@ -354,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               )),
         ),
-        Expanded(child: SizedBox(width: 50)),
+        Expanded(child: SizedBox()),
         Expanded(
           child: FlatButton(
               onPressed: () {},
