@@ -1,5 +1,4 @@
 import 'package:Arriv/models/trips.dart';
-import 'package:Arriv/screens/booking_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

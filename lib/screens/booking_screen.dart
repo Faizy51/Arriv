@@ -1,10 +1,6 @@
 import 'package:Arriv/models/userDetails.dart';
 import 'package:Arriv/views/custom_appBar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../constants.dart';
-import 'login_screen.dart';
 
 class BookingScreen extends StatefulWidget {
 

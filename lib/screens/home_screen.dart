@@ -1,7 +1,6 @@
 import 'package:Arriv/constants.dart';
 import 'package:Arriv/models/userDetails.dart';
 import 'package:Arriv/models/wallet.dart';
-import 'package:Arriv/screens/login_screen.dart';
 import 'package:Arriv/screens/qr_code_popup.dart';
 import 'package:Arriv/views/busList.dart';
 import 'package:Arriv/views/custom_appBar.dart';

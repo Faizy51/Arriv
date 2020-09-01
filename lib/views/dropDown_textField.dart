@@ -1,7 +1,6 @@
 import 'package:Arriv/constants.dart';
 import 'package:Arriv/models/stops.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class DropDownTextField extends StatelessWidget {
